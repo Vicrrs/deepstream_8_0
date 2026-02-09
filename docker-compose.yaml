@@ -1,0 +1,20 @@
+services:
+  deepstream:
+    container_name: deepstream_8
+    image: nvcr.io/nvidia/deepstream:8.0-triton-multiarch
+    restart: always
+    network_mode: "host"
+    privileged: true
+    gpus: all
+    working_dir: /opt/nvidia/deepstream/deepstream
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - DISPLAY=${DISPLAY}
+      - CUDA_MODULE_LOADING=LAZY
+      - GST_DEBUG=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./app:/app
+    stdin_open: true
+    tty: true
+    command: ["bash"]

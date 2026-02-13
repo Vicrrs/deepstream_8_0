@@ -1,0 +1,84 @@
+# Os valores no arquivo de configuração são substituídos pelos valores definidos através das propriedades do GObject.
+
+[property]
+enable=1
+# Largura e altura usadas para a configuração na qual as seguintes opções são definidas
+config-width=1920
+config-height=1080
+# osd-mode 0: Não mostrar linhas, ROIs nem texto.
+#          1: Mostrar apenas linhas, ROIs e texto estático, ou seja, rótulos
+#          2: Mostrar todas as informações do modo 1 mais informações sobre as contagens
+osd-mode=1
+# Definir o tamanho da fonte OSD que deve ser exibido
+display-font-size=4
+
+## Configuração por stream
+#[roi-filtering-stream-0]
+# habilitar ou desabilitar a seguinte funcionalidade
+#enable=1
+# ROI para filtrar objetos selecionados e removê-los dos metadados
+#roi-RF=295;643;579;634;642;913;56;828
+# remover objetos no ROI
+#inverse-roi=0
+#class-id=-1
+
+## Configuração por stream
+#[roi-filtering-stream-2]
+#habilitar ou desabilitar a seguinte funcionalidade
+#enable=1
+# ROI para filtrar objetos selecionados e removê-los dos metadados
+#roi-RF=295;643;579;634;642;913;56;828
+# remover objetos no ROI
+#inverse-roi=1
+#class-id=0
+
+#[overcrowding-stream-1]
+#enable=1
+#roi-OC=295;643;579;634;642;913;56;828
+## número de objetos que irão acionar o OC
+#object-threshold=2
+#class-id=-1
+
+#[line-crossing-stream-0]
+#enable=1
+## Rótulo;direção;lc
+##line-crossing-Entry=1072;911;1143;1058;944;1020;1297;1020;
+#line-crossing-Exit=789;672;1084;900;851;773;1203;732
+#class-id=0
+## estendido quando 0 - apenas conta cruzamentos na Linha configurada
+##              1 - assume linha estendida, contando todos os cruzamentos
+#extended=0
+## Modos LC suportados:
+##loose   : conta todos os cruzamentos sem aderência rigorosa à direção
+##balanced: Espera-se aderência estrita à direção comparado ao modo=loose
+##strict  : Aderência estrita à direção esperada comparado ao modo=balanced
+#mode=loose
+
+#[line-crossing-stream-1]
+#enable=1
+##Rótulo;direção;lc
+##line-crossing-Entry=1072;911;1143;1058;944;1020;1297;1020;
+#line-crossing-Exit=789;672;1084;900;851;773;1203;732
+#class-id=0
+#estendido quando 0 - apenas conta cruzamentos na Linha configurada
+#              1 - assume linha estendida, contando todos os cruzamentos
+#extended=0
+## Modos LC suportados:
+##loose   : conta todos os cruzamentos sem aderência rigorosa à direção
+##balanced: Espera-se aderência estrita à direção comparado ao modo=loose
+##strict  : Aderência estrita à direção esperada comparado ao modo=balanced
+#mode=loose
+
+#[direction-detection-stream-0]
+#enable=1
+##Rótulo;direção;
+#direction-South=284;840;360;662;
+#direction-North=1106;622;1312;701;
+#class-id=0
+
+#[direction-detection-stream-1]
+#enable=1
+##Rótulo;direção;
+#direction-South=284;840;360;662;
+#direction-North=1106;622;1312;701;
+#class-id=0

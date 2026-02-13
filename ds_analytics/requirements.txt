@@ -1,0 +1,25 @@
+pyyaml
+pybind11
+numpy
+influxdb
+scikit-build
+opencv-python
+imagehash
+watchdog
+# protobuf
+gpustat
+jsonschema
+persistqueue
+tritonclient[grpc]==2.22.3 
+redis
+shapely
+matplotlib
+pillow
+mediapipe
+python-decouple
+mysql-connector-python
+pandas
+objgraph
+onnx
+ultralytics
+onnxsim

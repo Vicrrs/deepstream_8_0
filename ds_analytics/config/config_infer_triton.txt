@@ -1,0 +1,36 @@
+infer_config {
+  unique_id: 1
+  gpu_id: 0
+  network_name: "yolo_person"
+
+  infer_input_tensor {
+    name: "images"
+    dims: [3, 640, 640]
+    data_type: FLOAT
+  }
+
+  infer_output_tensor {
+    name: "output0"
+    data_type: FLOAT
+  }
+
+  backend {
+    triton {
+      model_name: "yolo_person"
+      version: -1
+      grpc {
+        grpc_server_url: "localhost:8001"
+        use_ssl: 0
+      }
+    }
+  }
+}
+
+input_control {
+  process_mode: PROCESS_MODE_FULL_FRAME
+  interval: 0
+}
+
+output_control {
+  output_tensor_meta: true
+}

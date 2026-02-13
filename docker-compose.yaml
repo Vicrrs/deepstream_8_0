@@ -6,15 +6,81 @@ services:
     network_mode: "host"
     privileged: true
     gpus: all
-    working_dir: /opt/nvidia/deepstream/deepstream
+    working_dir: /app
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - DISPLAY=${DISPLAY}
       - CUDA_MODULE_LOADING=LAZY
+      - GST_PLUGIN_PATH=/opt/nvidia/deepstream/deepstream/lib/gst-plugins/lib:/usr/lib/gstreamer-1.0/:/plugins/:/usr/lib/x86_64-linux-gnu/gstreamer-1.0:/usr/lib/x86_64-linux-gnu/gstreamer-1.0/deepstream:/root/gst-interpipe/gst/interpipe/.libs
       - GST_DEBUG=1
+      - LOGGING_LEVEL=ERROR
+      - TRITON_URL=localhost:8001
+      - MODELS_DIR=/models
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./app:/app
+      - ./ds_analytics:/app
+      - ./triton_models:/models
     stdin_open: true
     tty: true
     command: ["bash"]
+    entrypoint: [""]
+
+  triton:
+    image: nvcr.io/nvidia/tritonserver:24.08-py3
+    runtime: nvidia
+    restart: always
+    network_mode: "host"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - ./triton_models:/models
+    command: >
+      tritonserver
+      --model-repository=/models
+      --log-verbose=1
+      --exit-on-error=false
+      --strict-readiness=false
+    healthcheck:
+      test: ["CMD", "bash", "-lc", "curl -sf http://localhost:8000/v2/health/ready >/dev/null"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  rtsp-server:
+    restart: always
+    build:
+      context: rtsp-simple-server
+      dockerfile: Dockerfile
+    ports:
+      - "8554:8554"
+    environment:
+      - RTSP_PORT=8554
+    volumes:
+      - ./rtsp-simple-server/rtsp-simple-server_ffmpeg.0.20.0.yml:/app/rtsp-simple-server.yml
+      - ./streams/:/streams/
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
+    command: ./mediamtx /app/rtsp-simple-server.yml
+
+  web:
+    image: python:3.11-slim
+    working_dir: /app
+    network_mode: "host"
+    volumes:
+      - ./:/app
+    environment:
+      - RTSP_HOST=127.0.0.1
+    command: >
+      bash -lc "apt-get update &&
+      apt-get install -y --no-install-recommends libglib2.0-0 libsm6 libxext6 libxrender1 libxcb1 &&
+      pip uninstall -y opencv-python opencv-contrib-python || true &&
+      pip install fastapi uvicorn opencv-python-headless &&
+      uvicorn web.app:app --host 0.0.0.0 --port 8082"
+    depends_on:
+      - deepstream

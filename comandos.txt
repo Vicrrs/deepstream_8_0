@@ -1,0 +1,625 @@
+make run CAM=video01 MODEL=EPI RTSP_PORT=9001 RTSP_MOUNT=/cam1 UDP_PORT=5401
+
+
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9001/cam1
+
+
+
+
+docker compose restart rtsp-server
+
+
+
+make up
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/models/EPI/epi.txt --rtsp-port 9001 --rtsp-mount /ds-epi  --udp-port 5401 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video02 --pgie-config /app/models/rodovia/rodovia.txt --rtsp-port 9003 --rtsp-mount /ds-hall --udp-port 5403 & \
+  wait
+'
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/models/Hall/hall.txt --rtsp-port 9001 --rtsp-mount /ds-person  --udp-port 5401 & \
+  wait
+'
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video02 --pgie-config /app/models/rodovia/rodovia.txt --rtsp-port 9001 --rtsp-mount /ds-rodovia  --udp-port 5401 & \
+  wait
+'
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video03 --pgie-config /app/models/EPI/epi.txt --rtsp-port 9001 --rtsp-mount /ds-epi  --udp-port 5401 & \
+  wait
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video04 --pgie-config /app/models/person/person.txt --rtsp-port 9001 --rtsp-mount /ds-persons  --udp-port 5401 & \
+  wait
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video04 --pgie-config /app/models/entrada_person/person.txt --rtsp-port 9001 --rtsp-mount /ds-persons  --udp-port 5401 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video05 --pgie-config /app/models/Hall/hall.txt --rtsp-port 9003 --rtsp-mount /ds-hall  --udp-port 5403 & \
+  wait
+'
+
+
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9001/ds-epi
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9003/ds-hall
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9003/ds-person
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9001/ds-persons
+
+
+
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/config/pgie_triton_epi.pbtxt --rtsp-port 9001 --rtsp-mount /ds-epi  --udp-port 5401 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video02 --pgie-config /app/models/rodovia/rodovia.txt      --rtsp-port 9003 --rtsp-mount /ds-hall --udp-port 5403 & \
+  wait
+'
+
+
+make run CAM=video01 PGIE_CONFIG=/app/config/pgie_triton_epi.pbtxt RTSP_PORT=9001 UDP_PORT=5401
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9001/ds-mosaic
+
+
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/models/Hall/hall.txt --rtsp-port 9003 --rtsp-mount /ds-hall  --udp-port 5403 & \
+  wait
+'
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/models/entrada_person/person.txt --rtsp-port 9003 --rtsp-mount /ds-entrada  --udp-port 5403 & \
+  wait
+'
+
+
+
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video04 --pgie-config /app/models/Hall/hall.txt --rtsp-port 9005 --rtsp-mount /ds-person  --udp-port 5405 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/models/entrada_person/person.txt --rtsp-port 9003 --rtsp-mount /ds-entrada  --udp-port 5403 & \
+  wait
+'
+
+
+
+
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9005/ds-person
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9003/ds-entrada
+
+
+
+
+
+
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video02 --pgie-config /app/models/rodovia/rodovia.txt --rtsp-port 9001 --rtsp-mount /ds-rodovia  --udp-port 5401 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/models/entrada_person/person.txt --rtsp-port 9003 --rtsp-mount /ds-entrada  --udp-port 5403 & \
+  wait
+'
+
+
+
+
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9001/ds-rodovia
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9003/ds-entrada
+
+
+
+---------------------------------
+
+docker compose exec deepstream bash
+
+GST_UDP_IPV6=0 python3 run.py \
+  -i rtsp://127.0.0.1:8554/video03 \
+  --pgie-config /app/config/pgie_triton_person.pbtxt \
+  --rtsp-port 9002 --rtsp-mount /person --udp-port 5402
+
+GST_UDP_IPV6=0 python3 run.py \
+  -i rtsp://127.0.0.1:8554/video03 \
+  --pgie-config /app/config/pgie_triton_person.pbtxt \
+  --rtsp-port 9002 --rtsp-mount /person --udp-port 5402
+
+ffplay rtsp://127.0.0.1:9002/person
+
+
+
+
+
+
+docker compose up --build -d
+
+
+docker restart deepstream_7_1-rtsp-server-1
+
+
+docker exec -it deepstream_7_1-deepstream-1 bash
+
+
+ffplay rtsp://127.0.0.1:9000/ds-mosaic
+
+
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01 \
+     rtsp://127.0.0.1:8554/video02 \
+     rtsp://127.0.0.1:8554/video03 \
+     rtsp://127.0.0.1:8554/video04 \
+     rtsp://127.0.0.1:8554/video05 \
+     rtsp://127.0.0.1:8554/video06 \
+     rtsp://127.0.0.1:8554/video07 \
+     rtsp://127.0.0.1:8554/video08 \
+     rtsp://127.0.0.1:8554/video09 \
+     rtsp://127.0.0.1:8554/video010 \
+     rtsp://127.0.0.1:8554/video011 \
+     rtsp://127.0.0.1:8554/video012 \
+     rtsp://127.0.0.1:8554/video013 \
+     rtsp://127.0.0.1:8554/video014 \
+     rtsp://127.0.0.1:8554/video015
+
+     
+docker compose -f docker-compose_arm64_ubuntu22.yml up --build -d
+docker exec -it architecture-deepstream-1 bash
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' d0ee86087a81
+
+
+python3 run.py -i rtsp://127.0.0.1:8554/video01
+
+python3 export_yoloV8.py -w /home/DS7.1/ds_analytics/models/yolov8/yolo_best.pt --simplify --dynamic
+
+
+
+python3 export_yoloV8.py -w /home/vicrrs/Projetos/deepstream_application/ds_analytics/models/person_detection/yolov8n.pt --simplify --dynamic
+
+python3 export_yoloV8.py -w /home/vicrrs/Projetos/github/deepstream_7_1/ds_analytics/models/new_yolo_sitelbra/best.pt --simplify --dynamic
+
+python3 export_yoloV8.py -w /home/vicrrs/Downloads/human-parts-DatasetNinja/runs_pf/y8n_person_face_b2_rect/weights/best.pt --simplify --dynamic
+
+python3 export_yoloV8.py -w /home/vicrrs/Downloads/face/yolo-face.pt --simplify --dynamic
+
+python3 export_yoloV8.py -w /home/vicrrs/Projetos/github/deepstream_7_1/ds_analytics/models/new_yolo_sitelbra/model_v2.pt --simplify --dynamic
+
+
+python3 roza_dsAnalytics/run.py -i rtsp://127.0.0.1:8554/video01
+
+
+python3 ds_analytics/plugins/DeepStream-Yolo/utils/export_yoloV8.py -w /home/vicrrs/Projetos/github/deepstream_7_1/ds_analytics/models/Hall/HALL_people_best.pt --simplify --dynamic
+
+python3 ds_analytics/plugins/DeepStream-Yolo/utils/export_yoloV8.py -w /home/vicrrs/Projetos/github/deepstream_7_1/ds_analytics/models/rodovia/CAR_best_final.pt --simplify --dynamic
+
+python3 ds_analytics/plugins/DeepStream-Yolo/utils/export_yoloV8.py -w /home/vicrrs/Projetos/github/deepstream_7_1/ds_analytics/models/person/best.pt --simplify --dynamic
+
+
+python3 ds_analytics/plugins/DeepStream-Yolo/utils/export_yoloV8.py -w /home/vicrrs/Projetos/github/deepstream_7_1/ds_analytics/models/pessoas/yolov8n.pt --simplify --dynamic
+
+
+
+
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video02 --pgie-config /app/models/entrada_person/person.txt --rtsp-port 9003 --rtsp-mount /ds-entrada  --udp-port 5403 & \
+  wait
+'
+
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9003/ds-entrada
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video04 --pgie-config /app/models/pessoas/pessoas.txt --rtsp-port 9003 --rtsp-mount /ds-entrada  --udp-port 5403 & \
+  wait
+'
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video04 --pgie-config /app/models/pessoas/pessoas.txt --rtsp-port 9003 --rtsp-mount /ds-entrada  --udp-port 5403 & \
+  wait
+'
+
+
+
+
+  #escada
+  video01:
+    source: rtsp://admin:DbJTyfP%2A3m%24@10.61.42.51:554/cam/realmonitor?channel=1&subtype=0
+    sourceProtocol: tcp
+    sourceOnDemand: yes
+
+  #entrada rampa
+  video02:
+    source: rtsp://admin:DbJTyfP%2A3m%24@10.61.42.102:554/cam/realmonitor?channel=1&subtype=0
+    sourceProtocol: tcp
+    sourceOnDemand: yes
+
+  #Hall
+  video03:
+    source: rtsp://admin:DbJTyfP%2A3m%24@10.61.42.103:554/cam/realmonitor?channel=1&subtype=0
+    sourceProtocol: tcp
+    sourceOnDemand: yes
+  
+  # Delivery
+  video04:
+    source: rtsp://admin:DbJTyfP%2A3m%24@10.61.42.104:554/cam/realmonitor?channel=1&subtype=0
+    sourceProtocol: tcp
+    sourceOnDemand: yes
+
+
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video01 --pgie-config /app/models/pessoas/pessoas.txt --rtsp-port 9001 --rtsp-mount /ds-escada  --udp-port 5401 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video02 --pgie-config /app/models/entrada_person/person.txt --rtsp-port 9002 --rtsp-mount /ds-rampa  --udp-port 5402 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video03 --pgie-config /app/models/Hall/hall.txt --rtsp-port 9003 --rtsp-mount /ds-hall  --udp-port 5403 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video04 --pgie-config /app/models/pessoas/pessoas.txt --rtsp-port 9004 --rtsp-mount /ds-delivery  --udp-port 5404 & \
+  wait
+'
+
+
+
+
+
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9001/ds-escada
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9002/ds-rampa
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9003/ds-hall
+ffplay -fflags nobuffer -flags low_delay -rtsp_transport tcp rtsp://127.0.0.1:9004/ds-delivery
+
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video05 --pgie-config /app/models/entrada_person/person.txt --rtsp-port 9005 --rtsp-mount /ds-video01  --udp-port 5405 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video06 --pgie-config /app/models/Hall/hall.txt --rtsp-port 9006 --rtsp-mount /ds-video02  --udp-port 5406 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video07 --pgie-config /app/models/rodovia/rodovia.txt --rtsp-port 9007 --rtsp-mount /ds-video03  --udp-port 5407 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video08 --pgie-config /app/models/EPI/epi.txt --rtsp-port 9008 --rtsp-mount /ds-video04  --udp-port 5408 & \
+  wait
+'
+
+# --- MESMA EXECUÇÃO USANDO TRITON (nvinferserver) ---
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  python3 run.py -i rtsp://127.0.0.1:8554/video05 --pgie-config /app/config/pgie_triton_entrada_person.pbtxt --rtsp-port 9005 --rtsp-mount /ds-video01  --udp-port 5405 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video06 --pgie-config /app/config/pgie_triton_hall.pbtxt          --rtsp-port 9006 --rtsp-mount /ds-video02  --udp-port 5406 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video07 --pgie-config /app/config/pgie_triton_rodovia.pbtxt        --rtsp-port 9007 --rtsp-mount /ds-video03  --udp-port 5407 & \
+  python3 run.py -i rtsp://127.0.0.1:8554/video08 --pgie-config /app/config/pgie_triton_epi.pbtxt            --rtsp-port 9008 --rtsp-mount /ds-video04  --udp-port 5408 & \
+  wait
+'
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+  cd /app && \
+  for i in $(seq -w 1 37); do
+    cam=video${i}
+    idx=$((10#$i))
+    rtsp_port=$((9000+idx))
+    udp_port=$((5400+idx))
+    python3 run.py -i rtsp://127.0.0.1:8554/${cam} \
+      --pgie-config /app/models/pessoas/pessoas.txt \
+      --rtsp-port ${rtsp_port} --rtsp-mount /ds-${cam} --udp-port ${udp_port} &
+  done
+  wait
+'
+
+LIBGL_ALWAYS_SOFTWARE=1 vlc rtsp://127.0.0.1:9050/ds-mosaic-4
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video38 \
+     rtsp://127.0.0.1:8554/video39 \
+     rtsp://127.0.0.1:8554/video40 \
+     rtsp://127.0.0.1:8554/video41 \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-4 \
+  --udp-port 5450
+'
+LIBGL_ALWAYS_SOFTWARE=1 vlc rtsp://127.0.0.1:9050/ds-mosaic-4
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-5 \
+  --udp-port 5450
+'
+
+
+LIBGL_ALWAYS_SOFTWARE=1 vlc rtsp://127.0.0.1:9050/ds-mosaic-5
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-5 \
+  --udp-port 5450
+'
+
+LIBGL_ALWAYS_SOFTWARE=1 vlc rtsp://127.0.0.1:9050/ds-mosaic-6
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-7 \
+  --udp-port 5450
+'
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+     rtsp://127.0.0.1:8554/video08_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-8 \
+  --udp-port 5450
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+     rtsp://127.0.0.1:8554/video09_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-9 \
+  --udp-port 5450
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+     rtsp://127.0.0.1:8554/video09_5fps \
+     rtsp://127.0.0.1:8554/video10_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-10 \
+  --udp-port 5450
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+     rtsp://127.0.0.1:8554/video09_5fps \
+     rtsp://127.0.0.1:8554/video10_5fps \
+     rtsp://127.0.0.1:8554/video11_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-11 \
+  --udp-port 5450
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+     rtsp://127.0.0.1:8554/video09_5fps \
+     rtsp://127.0.0.1:8554/video10_5fps \
+     rtsp://127.0.0.1:8554/video11_5fps \
+     rtsp://127.0.0.1:8554/video12_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-12 \
+  --udp-port 5450
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+     rtsp://127.0.0.1:8554/video09_5fps \
+     rtsp://127.0.0.1:8554/video10_5fps \
+     rtsp://127.0.0.1:8554/video11_5fps \
+     rtsp://127.0.0.1:8554/video12_5fps \
+     rtsp://127.0.0.1:8554/video14_5fps \
+     rtsp://127.0.0.1:8554/video15_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-15 \
+  --udp-port 5450
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video02_5fps \
+     rtsp://127.0.0.1:8554/video03_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video06_5fps \
+     rtsp://127.0.0.1:8554/video07_5fps \
+     rtsp://127.0.0.1:8554/video09_5fps \
+     rtsp://127.0.0.1:8554/video10_5fps \
+     rtsp://127.0.0.1:8554/video11_5fps \
+     rtsp://127.0.0.1:8554/video12_5fps \
+     rtsp://127.0.0.1:8554/video14_5fps \
+     rtsp://127.0.0.1:8554/video15_5fps \
+     rtsp://127.0.0.1:8554/video16_5fps \
+     rtsp://127.0.0.1:8554/video17_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-16 \
+  --udp-port 5450
+'
+
+
+
+
+
+
+
+10.61.42.53 -> video25_5fps *
+10.61.42.44 -> video20_5fps *
+10.61.42.52 -> video24_5fps *
+10.61.42.105 -> video31_5fp
+10.61.42.104 -> video04_5fps: *
+10.61.42.2 -> video05_5fps *
+10.61.42.97 -> video28_5fps *
+10.61.42.51 -> video01_5fps *
+
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video20_5fps \
+     rtsp://127.0.0.1:8554/video24_5fps \
+     rtsp://127.0.0.1:8554/video25_5fps \
+     rtsp://127.0.0.1:8554/video28_5fps \
+     rtsp://127.0.0.1:8554/video31_5fp \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-35 \
+  --udp-port 5450
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -i rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video20_5fps \
+     rtsp://127.0.0.1:8554/video24_5fps \
+     rtsp://127.0.0.1:8554/video25_5fps \
+     rtsp://127.0.0.1:8554/video28_5fps \
+     rtsp://127.0.0.1:8554/video31_5fp \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-35 \
+  --udp-port 5450 \
+  --metrics-port 10050
+'
+
+
+docker compose -f docker-compose.yaml exec -it deepstream bash -lc '
+cd /app || exit 1
+python3 run.py \
+  -  rtsp://127.0.0.1:8554/video01_5fps \
+     rtsp://127.0.0.1:8554/video04_5fps \
+     rtsp://127.0.0.1:8554/video05_5fps \
+     rtsp://127.0.0.1:8554/video20_5fps \
+     rtsp://127.0.0.1:8554/video24_5fps \
+     rtsp://127.0.0.1:8554/video25_5fps \
+     rtsp://127.0.0.1:8554/video28_5fps \
+     rtsp://127.0.0.1:8554/video31_5fps \
+  --pgie-config /app/models/pessoas/pessoas.txt \
+  --rtsp-port 9050 \
+  --rtsp-mount /ds-mosaic-35 \
+  --udp-port 5450 \
+  --metrics-port 9100
+'

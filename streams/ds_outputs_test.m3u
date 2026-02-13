@@ -1,0 +1,5 @@
+#EXTM3U
+#EXTINF:-1,DS video38
+rtsp://127.0.0.1:9038/ds-video38
+#EXTINF:-1,DS video39
+rtsp://127.0.0.1:9039/ds-video39

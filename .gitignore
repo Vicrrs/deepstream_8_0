@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+ds_analytics/models
+triton_models/
+
 # Distribution / packaging
 .Python
 build/

@@ -8,6 +8,7 @@ __pycache__/
 
 ds_analytics/models
 triton_models/
+ds_analytics/plugins
 
 # Distribution / packaging
 .Python
